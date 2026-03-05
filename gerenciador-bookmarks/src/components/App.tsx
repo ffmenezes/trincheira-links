@@ -177,7 +177,7 @@ export default function App() {
               setSortBy('name-asc');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            class="text-2xl font-bold text-verde-belic-600 dark:text-verde-belic-400 cursor-pointer hover:opacity-80 transition-opacity"
+            class="text-2xl font-bold font-mono uppercase tracking-widest text-verde-belic-600 dark:text-verde-belic-400 cursor-pointer hover:opacity-80 transition-opacity"
           >
             Trincheira Links
           </h1>
