@@ -129,7 +129,7 @@ Sempre prefira usar tags existentes. Crie novas apenas quando nenhuma se encaixa
 | `newsletter` | Newsletters e curadoria de conteudo |
 | `open-source` | Projetos e ferramentas open-source |
 | `pdf` | Ferramentas de manipulacao e conversao de PDF |
-| `portugues` | Ferramentas especificas para o idioma portugues |
+| `portugues` | Ferramentas que ajudam a escrever em portugues (geradores de texto, legibilidade) |
 | `postgres` | PostgreSQL — sandboxes e ferramentas |
 | `react` | Bibliotecas e componentes React |
 | `reddit` | Comunidades e discussoes tecnicas no Reddit |
