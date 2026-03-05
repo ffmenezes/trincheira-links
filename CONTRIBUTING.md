@@ -100,9 +100,46 @@ Regras:
 Me retorne APENAS o conteudo do arquivo .mdx e o nome sugerido para o arquivo.
 ````
 
-## Tags comuns
+## Vocabulario de tags
 
-`dev`, `design`, `ia`, `ferramenta`, `open-source`, `database`, `api`, `frontend`, `backend`, `devops`, `produtividade`, `marketing`, `gerador`, `json`, `pdf`, `mcp`, `componentes`, `ui`, `teste`, `documentacao`, `comunidade`
+Sempre prefira usar tags existentes. Crie novas apenas quando nenhuma se encaixa e a categoria e recorrente.
+
+| Tag | Uso |
+|-----|-----|
+| `agents` | Agentes de IA, GPTs e automacoes inteligentes |
+| `ai` | Ferramentas e recursos de inteligencia artificial |
+| `analytics` | Analise de dados, heatmaps e metricas |
+| `api` | Ferramentas de API, REST, JSON e webhooks |
+| `backend` | Frameworks e servicos backend |
+| `blog` | Frameworks e ferramentas para blogs |
+| `components` | Bibliotecas de componentes UI prontos |
+| `comunidade` | Comunidades, foruns e redes de discussao |
+| `database` | Ferramentas de banco de dados e sandbox SQL |
+| `design` | Design patterns e referencias visuais |
+| `dev` | Ferramentas e frameworks de desenvolvimento |
+| `devops` | Infraestrutura, Docker e monitoramento |
+| `ferramenta` | Utilitarios e ferramentas gerais |
+| `frontend` | Frameworks e bibliotecas frontend |
+| `github` | Repositorios e recursos do GitHub |
+| `gpt` | GPTs customizados no ChatGPT |
+| `json` | Visualizadores, formatadores e parsers JSON |
+| `marketing` | Marketing digital e estrategia comercial |
+| `mcp` | Model Context Protocol — servidores e ferramentas |
+| `mockdata` | Geradores de dados ficticios para testes |
+| `newsletter` | Newsletters e curadoria de conteudo |
+| `open-source` | Projetos e ferramentas open-source |
+| `pdf` | Ferramentas de manipulacao e conversao de PDF |
+| `portugues` | Ferramentas especificas para o idioma portugues |
+| `postgres` | PostgreSQL — sandboxes e ferramentas |
+| `react` | Bibliotecas e componentes React |
+| `reddit` | Comunidades e discussoes tecnicas no Reddit |
+| `security` | Seguranca, JWT e geracao de chaves |
+| `shadcn` | Ecossistema shadcn/ui — temas e extensoes |
+| `ui` | Interfaces, design systems e componentes visuais |
+| `utils` | Utilitarios gerais para o dia a dia de dev |
+| `video` | Ferramentas de video — edicao e compressao |
+
+**Auto-tag por URL:** links do `github.com` recebem `github` + `open-source`, links do `reddit.com` recebem `reddit`, links do `chatgpt.com/g/` recebem `gpt` + `agents`.
 
 ## Duvidas?
 
