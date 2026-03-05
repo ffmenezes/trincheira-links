@@ -112,18 +112,27 @@ export default function App() {
 
   const sorted = createMemo(() => {
     const items = [...filtered()];
+    const favs = favorites();
     const sort = sortBy();
-    switch (sort) {
-      case 'name-asc':
-        return items.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
-      case 'name-desc':
-        return items.sort((a, b) => b.name.localeCompare(a.name, 'pt-BR'));
-      case 'date-asc':
-        return items.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-      case 'date-desc':
-      default:
-        return items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
+    const compare = (a: Bookmark, b: Bookmark) => {
+      switch (sort) {
+        case 'name-asc':
+          return a.name.localeCompare(b.name, 'pt-BR');
+        case 'name-desc':
+          return b.name.localeCompare(a.name, 'pt-BR');
+        case 'date-asc':
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case 'date-desc':
+        default:
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+    };
+    return items.sort((a, b) => {
+      const aFav = favs.has(a.id) ? 0 : 1;
+      const bFav = favs.has(b.id) ? 0 : 1;
+      if (aFav !== bFav) return aFav - bFav;
+      return compare(a, b);
+    });
   });
 
   const availableTags = createMemo(() => {

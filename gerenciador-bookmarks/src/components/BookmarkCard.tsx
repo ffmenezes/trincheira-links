@@ -13,7 +13,11 @@ export default function BookmarkCard(props: Props) {
       href={props.bookmark.link}
       target="_blank"
       rel="noopener noreferrer"
-      class="group flex border border-verde-belic-200 dark:border-transparent hover:border-verde-belic-400 dark:hover:border-verde-belic-700 rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md dark:bg-[#242424]"
+      class="group flex border rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md dark:bg-[#242424]"
+      classList={{
+        'border-yellow-400/60 dark:border-yellow-500/40 hover:border-yellow-500 dark:hover:border-yellow-500/60': props.isFavorite,
+        'border-verde-belic-200 dark:border-transparent hover:border-verde-belic-400 dark:hover:border-verde-belic-700': !props.isFavorite,
+      }}
     >
       <div class="flex-1 min-w-0 p-4 flex flex-col">
         <div class="flex items-start gap-2">
