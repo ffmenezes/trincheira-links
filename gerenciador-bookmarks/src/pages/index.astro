@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import App from '../components/App';
+import { getCollection } from 'astro:content';
+
+const allLinks = await getCollection('links');
+
+const bookmarks = allLinks
+  .map((entry) => ({
+    id: entry.slug,
+    ...entry.data,
+  }))
+  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+const tagCounts = new Map<string, number>();
+for (const bk of bookmarks) {
+  for (const tag of bk.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = Array.from(tagCounts.entries())
+  .map(([tag, count]) => ({ tag, count }))
+  .sort((a, b) => a.tag.localeCompare(b.tag));
+
+const bundleSet = new Set<string>();
+for (const bk of bookmarks) {
+  for (const bundle of bk.bundles ?? []) {
+    bundleSet.add(bundle);
+  }
+}
+const bundles = Array.from(bundleSet).sort();
+
+const clientData = JSON.stringify({ bookmarks, tags, bundles });
+---
+
+<Layout title="Trincheira Links">
+  <script is:inline define:vars={{ clientData }}>
+    window.__BOOKMARKS_DATA__ = JSON.parse(clientData);
+  </script>
+  <App client:only="solid-js" />
+</Layout>
