@@ -91,7 +91,7 @@ export default function BookmarkCard(props: Props) {
         </div>
       </div>
 
-      <div class="w-40 shrink-0 bg-gray-100 dark:bg-[#1a1a1a]">
+      <div class="hidden sm:block w-40 shrink-0 bg-gray-100 dark:bg-[#1a1a1a]">
         {props.bookmark.ogthumb ? (
           <img
             src={props.bookmark.ogthumb}
