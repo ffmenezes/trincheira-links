@@ -86,7 +86,7 @@ export default function BookmarkCard(props: Props) {
             ))}
           </div>
           <div class="text-xs text-gray-400 mt-1.5">
-            {new Date(props.bookmark.createdAt).toLocaleDateString('pt-BR')}
+            {new Date(props.bookmark.createdAt).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
           </div>
         </div>
       </div>
