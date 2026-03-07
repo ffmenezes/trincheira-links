@@ -71,7 +71,7 @@ gerenciador-bookmarks/
 ## Adding a New Link
 
 1. Copy `src/content/links/_template.mdx`
-2. Rename to `YYYY-MM-DD-slug-name.mdx`
+2. Rename to `slug-name.mdx` (lowercase, hyphen-separated, no date)
 3. Fill in the frontmatter fields
 4. Submit a PR
 
