@@ -73,7 +73,8 @@ gerenciador-bookmarks/
 1. Copy `src/content/links/_template.mdx`
 2. Rename to `slug-name.mdx` (lowercase, hyphen-separated, no date)
 3. Fill in the frontmatter fields
-4. Submit a PR
+4. **createdAt:** Use full ISO 8601 datetime with time (e.g. `2026-03-07T14:30:00.000Z`), not just `00:00:00.000Z`. The time matters for "Mais recentes" sort — identical timestamps cause ties.
+5. Submit a PR
 
 ## OpenSpec
 

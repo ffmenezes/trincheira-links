@@ -21,7 +21,7 @@ function readUrlParams() {
     tags: params.get('tags')?.split(',').filter(Boolean) ?? [],
     bundle: params.get('bundle') ?? null,
     fav: params.get('fav') === '1',
-    sort: (params.get('sort') as SortOption) || 'date-desc',
+    sort: (params.get('sort') as SortOption) || 'name-asc',
   };
 }
 
@@ -38,7 +38,7 @@ function writeUrlParams(q: string, tags: string[], bundle: string | null, fav: b
 }
 
 export default function App() {
-  const initial = typeof window !== 'undefined' ? readUrlParams() : { q: '', tags: [], bundle: null, fav: false, sort: 'date-desc' as SortOption };
+  const initial = typeof window !== 'undefined' ? readUrlParams() : { q: '', tags: [], bundle: null, fav: false, sort: 'name-asc' as SortOption };
   const [data, setData] = createSignal<AppData | null>(null);
   const [query, setQuery] = createSignal(initial.q);
   const [selectedTags, setSelectedTags] = createSignal<string[]>(initial.tags);

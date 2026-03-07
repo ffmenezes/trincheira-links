@@ -45,7 +45,7 @@ bundles: []
 | `name` | Sim | Nome do site/ferramenta |
 | `link` | Sim | URL completa (com `https://`) |
 | `description` | Sim | Descricao curta em portugues |
-| `createdAt` | Sim | Data no formato ISO 8601 |
+| `createdAt` | Sim | Data e horário no formato ISO 8601 (ex: `2026-03-07T14:30:00.000Z`). Use o horário real de inserção, não apenas `00:00:00` — isso afeta a ordenação "Mais recentes". |
 | `tags` | Sim | Array de tags em minusculo |
 | `favicon` | Nao | URL do favicon (use o padrao do Google) |
 | `ogthumb` | Nao | URL da imagem Open Graph |
@@ -92,7 +92,7 @@ bundles: []
 Regras:
 - name: nome oficial do site, curto
 - description: em portugues, objetiva, 1-2 frases
-- createdAt: data de hoje no formato "YYYY-MM-DDT00:00:00.000Z"
+- createdAt: data e horário de hoje no formato ISO 8601 (ex: "YYYY-MM-DDTHH:mm:ss.000Z"). Use horário real, não 00:00:00.
 - tags: 3-6 tags em minusculo, sem acento, relevantes (ex: "dev", "design", "ia", "ferramenta", "open-source", "database", "api", "frontend", "backend")
 - favicon: use o padrao Google Favicons com o dominio do site
 - O nome do arquivo deve ser o slug do site: letras minusculas, sem acento, separado por hifen (ex: "jwt-io-debugger.mdx")
