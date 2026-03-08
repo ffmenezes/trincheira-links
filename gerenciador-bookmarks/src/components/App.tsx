@@ -230,62 +230,84 @@ export default function App() {
             </div>
 
             <Show when={data() && data()!.bundles.length > 0}>
-              <div class="flex flex-wrap gap-1.5">
-                <button
-                  onClick={() => setSelectedBundle(null)}
-                  class="px-2 py-0.5 text-[11px] rounded-full border transition-colors"
-                  classList={{
-                    'bg-verde-belic-600 border-verde-belic-600 text-white': !selectedBundle(),
-                    'border-verde-belic-200 text-verde-belic-700 dark:border-verde-belic-700 dark:text-verde-belic-300': !!selectedBundle(),
-                  }}
-                >
-                  Todos
-                </button>
-                <For each={data()!.bundles}>
-                  {(bundle) => (
-                    <button
-                      onClick={() => setSelectedBundle(bundle)}
-                      class="px-2 py-0.5 text-[11px] rounded-full border transition-colors"
-                      classList={{
-                        'bg-verde-belic-600 border-verde-belic-600 text-white': selectedBundle() === bundle,
-                        'border-verde-belic-200 text-verde-belic-700 dark:border-verde-belic-700 dark:text-verde-belic-300': selectedBundle() !== bundle,
-                      }}
-                    >
-                      {bundle}
-                    </button>
-                  )}
-                </For>
+              <div>
+                <div class="flex items-center gap-1 mb-1.5">
+                  <svg class="w-3 h-3 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                  </svg>
+                  <span class="text-[10px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide">Bundles</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => setSelectedBundle(null)}
+                    class="px-2 py-0.5 text-[11px] rounded-full border transition-colors"
+                    classList={{
+                      'bg-amber-500 border-amber-500 text-white dark:bg-amber-600 dark:border-amber-600': !selectedBundle(),
+                      'border-amber-200 text-amber-700 dark:border-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950': !!selectedBundle(),
+                    }}
+                  >
+                    Todos
+                  </button>
+                  <For each={data()!.bundles}>
+                    {(bundle) => (
+                      <button
+                        onClick={() => setSelectedBundle(bundle)}
+                        class="px-2 py-0.5 text-[11px] rounded-full border transition-colors flex items-center gap-1"
+                        classList={{
+                          'bg-amber-500 border-amber-500 text-white dark:bg-amber-600 dark:border-amber-600': selectedBundle() === bundle,
+                          'border-amber-200 text-amber-700 dark:border-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950': selectedBundle() !== bundle,
+                        }}
+                      >
+                        <svg class="w-2.5 h-2.5 shrink-0 opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                        </svg>
+                        {bundle}
+                      </button>
+                    )}
+                  </For>
+                </div>
               </div>
             </Show>
 
             <Show when={availableTags().length > 0}>
-              <div class="flex flex-wrap gap-1">
-                <For each={availableTags()}>
-                  {(t) => {
-                    const isSelected = () => selectedTags().includes(t.tag);
-                    return (
-                      <button
-                        onClick={() => handleTagToggle(t.tag)}
-                        class="px-2 py-0.5 text-[11px] rounded-full border transition-colors"
-                        classList={{
-                          'bg-verde-belic-600 border-verde-belic-600 text-white': isSelected(),
-                          'border-verde-belic-200 text-verde-belic-700 dark:border-verde-belic-700 dark:text-verde-belic-300': !isSelected(),
-                        }}
-                      >
-                        {t.tag}
-                        <span class="opacity-50 ml-0.5">{t.count}</span>
-                      </button>
-                    );
-                  }}
-                </For>
-                {selectedTags().length > 0 && (
-                  <button
-                    onClick={handleClearTags}
-                    class="px-2 py-0.5 text-[11px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  >
-                    Limpar
-                  </button>
-                )}
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-3 h-3 text-verde-belic-500 dark:text-verde-belic-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                    </svg>
+                    <span class="text-[10px] font-semibold text-verde-belic-600 dark:text-verde-belic-400 uppercase tracking-wide">Tags</span>
+                  </div>
+                  {selectedTags().length > 0 && (
+                    <button
+                      onClick={handleClearTags}
+                      class="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    >
+                      Limpar
+                    </button>
+                  )}
+                </div>
+                <div class="flex flex-wrap gap-1">
+                  <For each={availableTags()}>
+                    {(t) => {
+                      const isSelected = () => selectedTags().includes(t.tag);
+                      return (
+                        <button
+                          onClick={() => handleTagToggle(t.tag)}
+                          class="px-2 py-0.5 text-[11px] rounded-full border transition-colors"
+                          classList={{
+                            'bg-verde-belic-600 border-verde-belic-600 text-white': isSelected(),
+                            'border-verde-belic-200 text-verde-belic-700 dark:border-verde-belic-700 dark:text-verde-belic-300': !isSelected(),
+                          }}
+                        >
+                          {t.tag}
+                          <span class="opacity-50 ml-0.5">{t.count}</span>
+                        </button>
+                      );
+                    }}
+                  </For>
+                </div>
               </div>
             </Show>
           </div>
