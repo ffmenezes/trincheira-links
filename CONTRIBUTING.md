@@ -93,7 +93,7 @@ Regras:
 - name: nome oficial do site, curto
 - description: em portugues, objetiva, 1-2 frases
 - createdAt: data e horário de hoje no formato ISO 8601 (ex: "YYYY-MM-DDTHH:mm:ss.000Z"). Use horário real, não 00:00:00.
-- tags: 2-5 tags em minusculo, sem acento. SEMPRE prefira tags ja existentes no projeto: agents, ai, analytics, api, automacao, backend, blog, bmad, bubble, components, comunidade, database, design, dev, devops, github, gpt, icons, json, marketing, mcp, mockdata, mobile, newsletter, open-source, pdf, portugues, postman, postgres, react, regex, saas7d, screenshots, security, semcodar, shadcn, skills, supabase, tech12k, ui, utils, vibecoding, video, webhook, whatsapp, yaml, youtube. So crie tag nova se nenhuma existente se encaixa. Auto-tag por URL: github.com → "github" + "open-source"; chatgpt.com/g/ → "gpt" + "agents"
+- tags: 2-5 tags em minusculo, sem acento. SEMPRE prefira tags ja existentes no projeto: agents, ai, analytics, api, automacao, backend, blog, bmad, bubble, components, comunidade, database, design, dev, devops, github, gpt, icons, json, marketing, mcp, mockdata, mobile, newsletter, open-source, pdf, portugues, postman, postgres, react, reddit, regex, saas7d, screenshots, security, semcodar, shadcn, skills, supabase, tech12k, ui, utils, vibecoding, video, webhook, whatsapp, yaml, youtube. So crie tag nova se nenhuma existente se encaixa. Auto-tag por URL: github.com → "github" + "open-source"; reddit.com → "reddit"; chatgpt.com/g/ → "gpt" + "agents"
 - favicon: use o padrao Google Favicons com o dominio do site (ex: domain=github.com para links do GitHub)
 - O nome do arquivo deve ser o slug do site: letras minusculas, sem acento, separado por hifen (ex: "jwt-io-debugger.mdx")
 
@@ -142,6 +142,7 @@ Me retorne APENAS o conteudo do arquivo .mdx e o nome sugerido para o arquivo.
 | `postman` | Recursos especificos do Postman |
 | `postgres` | PostgreSQL — sandboxes e ferramentas |
 | `react` | Bibliotecas e componentes React |
+| `reddit` | Comunidades e discussoes no Reddit |
 | `regex` | Expressoes regulares — guias e testadores |
 | `saas7d` | Colecao SaaS 7D |
 | `screenshots` | Captura e criacao de screenshots/mockups |
@@ -160,7 +161,7 @@ Me retorne APENAS o conteudo do arquivo .mdx e o nome sugerido para o arquivo.
 | `yaml` | Ferramentas de YAML — validadores e formatadores |
 | `youtube` | Canais do YouTube |
 
-**Auto-tag por URL:** links do `github.com` recebem `github` + `open-source`, links do `chatgpt.com/g/` recebem `gpt` + `agents`.
+**Auto-tag por URL:** links do `github.com` recebem `github` + `open-source`, links do `reddit.com` recebem `reddit`, links do `chatgpt.com/g/` recebem `gpt` + `agents`.
 
 ## Duvidas?
 
