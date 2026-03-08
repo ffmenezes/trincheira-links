@@ -47,7 +47,7 @@ bundles: []
 | `description` | Sim | Descricao curta em portugues |
 | `createdAt` | Sim | Data e horário no formato ISO 8601 (ex: `2026-03-07T14:30:00.000Z`). Use o horário real de inserção, não apenas `00:00:00` — isso afeta a ordenação "Mais recentes". |
 | `tags` | Sim | Array de tags em minusculo |
-| `favicon` | Nao | URL do favicon (use o padrao do Google) |
+| `favicon` | Recomendado | URL do favicon — use o padrao do Google. Cards sem favicon ficam incompletos. |
 | `ogthumb` | Nao | URL da imagem Open Graph |
 | `creator` | Sim | Seu usuario do GitHub |
 | `favorite` | Nao | Sempre `false` no PR |
@@ -93,8 +93,8 @@ Regras:
 - name: nome oficial do site, curto
 - description: em portugues, objetiva, 1-2 frases
 - createdAt: data e horário de hoje no formato ISO 8601 (ex: "YYYY-MM-DDTHH:mm:ss.000Z"). Use horário real, não 00:00:00.
-- tags: 3-6 tags em minusculo, sem acento, relevantes (ex: "dev", "design", "ia", "ferramenta", "open-source", "database", "api", "frontend", "backend")
-- favicon: use o padrao Google Favicons com o dominio do site
+- tags: 3-6 tags em minusculo, sem acento, relevantes. Auto-tag por URL: github.com → incluir "github" e "open-source"; reddit.com → "reddit"; chatgpt.com/g/ → "gpt" e "agents"
+- favicon: use o padrao Google Favicons com o dominio do site (ex: domain=github.com para links do GitHub)
 - O nome do arquivo deve ser o slug do site: letras minusculas, sem acento, separado por hifen (ex: "jwt-io-debugger.mdx")
 
 Me retorne APENAS o conteudo do arquivo .mdx e o nome sugerido para o arquivo.
