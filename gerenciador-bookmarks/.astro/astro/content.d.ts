@@ -285,6 +285,13 @@ declare module 'astro:content' {
   collection: "links";
   data: InferEntrySchema<"links">
 } & { render(): Render[".mdx"] };
+"bentopdf.mdx": {
+	id: "bentopdf.mdx";
+  slug: "bentopdf";
+  body: string;
+  collection: "links";
+  data: InferEntrySchema<"links">
+} & { render(): Render[".mdx"] };
 "blind-text-generator.mdx": {
 	id: "blind-text-generator.mdx";
   slug: "blind-text-generator";
@@ -397,6 +404,13 @@ declare module 'astro:content' {
   collection: "links";
   data: InferEntrySchema<"links">
 } & { render(): Render[".mdx"] };
+"deepwiki.mdx": {
+	id: "deepwiki.mdx";
+  slug: "deepwiki";
+  body: string;
+  collection: "links";
+  data: InferEntrySchema<"links">
+} & { render(): Render[".mdx"] };
 "docling.mdx": {
 	id: "docling.mdx";
   slug: "docling";
@@ -407,6 +421,13 @@ declare module 'astro:content' {
 "expo.mdx": {
 	id: "expo.mdx";
   slug: "expo";
+  body: string;
+  collection: "links";
+  data: InferEntrySchema<"links">
+} & { render(): Render[".mdx"] };
+"free-for-dev.mdx": {
+	id: "free-for-dev.mdx";
+  slug: "free-for-dev";
   body: string;
   collection: "links";
   data: InferEntrySchema<"links">
@@ -673,6 +694,13 @@ declare module 'astro:content' {
 "react-grab.mdx": {
 	id: "react-grab.mdx";
   slug: "react-grab";
+  body: string;
+  collection: "links";
+  data: InferEntrySchema<"links">
+} & { render(): Render[".mdx"] };
+"reactbits.mdx": {
+	id: "reactbits.mdx";
+  slug: "reactbits";
   body: string;
   collection: "links";
   data: InferEntrySchema<"links">
@@ -967,5 +995,5 @@ declare module 'astro:content' {
 
 	type AnyEntryMap = ContentEntryMap & DataEntryMap;
 
-	export type ContentConfig = typeof import("./../../src/content/config.js");
+	export type ContentConfig = typeof import("../../src/content/config.js");
 }
