@@ -1,4 +1,5 @@
 import { For, Show, createMemo, createSignal } from 'solid-js';
+import type { TagFilterItem } from './App';
 
 interface TagInfo {
   tag: string;
@@ -7,8 +8,10 @@ interface TagInfo {
 
 interface Props {
   tags: TagInfo[];
-  selectedTags: string[];
+  tagFilters: TagFilterItem[];
   onToggle: (tag: string) => void;
+  onSetInclude: (tag: string) => void;
+  onSetExclude: (tag: string) => void;
   onClear: () => void;
 }
 
@@ -17,18 +20,8 @@ export default function TagFilter(props: Props) {
 
   const filteredTags = createMemo(() => {
     const q = tagQuery().toLowerCase();
-    if (!q) return props.tags;
-    return props.tags.filter((t) => t.tag.toLowerCase().includes(q));
-  });
-
-  const grouped = createMemo(() => {
-    const groups = new Map<string, TagInfo[]>();
-    for (const t of filteredTags()) {
-      const letter = t.tag[0].toLowerCase();
-      if (!groups.has(letter)) groups.set(letter, []);
-      groups.get(letter)!.push(t);
-    }
-    return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    const list = q ? props.tags.filter((t) => t.tag.toLowerCase().includes(q)) : props.tags;
+    return [...list].sort((a, b) => a.tag.localeCompare(b.tag));
   });
 
   return (
@@ -43,7 +36,7 @@ export default function TagFilter(props: Props) {
             Tags
           </h2>
         </div>
-        {props.selectedTags.length > 0 && (
+        {props.tagFilters.length > 0 && (
           <button
             onClick={props.onClear}
             class="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
@@ -75,33 +68,54 @@ export default function TagFilter(props: Props) {
           </button>
         </Show>
       </div>
-      <div class="space-y-1.5">
+      <div class="flex flex-col gap-1">
         <Show when={filteredTags().length > 0} fallback={
           <p class="text-[10px] text-gray-400 py-1">Nenhuma tag encontrada</p>
         }>
-          <For each={grouped()}>
-            {([, tags]) => (
-              <div class="flex flex-wrap gap-1">
-                <For each={tags}>
-                  {(t) => {
-                    const isSelected = () => props.selectedTags.includes(t.tag);
-                    return (
-                      <button
-                        onClick={() => props.onToggle(t.tag)}
-                        class="px-2 py-0.5 text-xs rounded transition-colors"
-                        classList={{
-                          'bg-verde-belic-600 text-white': isSelected(),
-                          'text-verde-belic-700 dark:text-verde-belic-300 hover:bg-verde-belic-100 dark:hover:bg-verde-belic-900': !isSelected(),
-                        }}
-                      >
-                        {t.tag}
-                        <span class="opacity-50 ml-0.5">{t.count}</span>
-                      </button>
-                    );
-                  }}
-                </For>
-              </div>
-            )}
+          <For each={filteredTags()}>
+            {(t) => {
+              const tf = () => props.tagFilters.find((f) => f.tag === t.tag);
+              const isSelected = () => !!tf();
+              const isExclude = () => tf()?.exclude ?? false;
+              return (
+                <span class="inline-flex items-center gap-0.5">
+                  <button
+                    onClick={() => props.onToggle(t.tag)}
+                    class="px-2 py-0.5 text-xs rounded transition-colors"
+                    classList={{
+                      'bg-verde-belic-600 text-white': isSelected() && !isExclude(),
+                      'bg-red-500/80 text-white': isSelected() && isExclude(),
+                      'text-verde-belic-700 dark:text-verde-belic-300 hover:bg-verde-belic-100 dark:hover:bg-verde-belic-900': !isSelected(),
+                    }}
+                  >
+                    {t.tag}
+                    <span class="opacity-50 ml-0.5">{t.count}</span>
+                  </button>
+                  <button
+                    onClick={() => props.onSetInclude(t.tag)}
+                    title="Incluir"
+                    class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-medium transition-colors shrink-0"
+                    classList={{
+                      'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400': isSelected() && !isExclude(),
+                      'text-emerald-600/70 dark:text-emerald-500/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/50': !isSelected() || isExclude(),
+                    }}
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={() => props.onSetExclude(t.tag)}
+                    title="Excluir"
+                    class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-medium transition-colors shrink-0"
+                    classList={{
+                      'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400': isSelected() && isExclude(),
+                      'text-rose-600/70 dark:text-rose-500/60 hover:bg-rose-50 dark:hover:bg-rose-950/50': !isSelected() || !isExclude(),
+                    }}
+                  >
+                    −
+                  </button>
+                </span>
+              );
+            }}
           </For>
         </Show>
       </div>

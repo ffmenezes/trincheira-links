@@ -14,22 +14,68 @@ interface AppData {
 
 type SortOption = 'date-desc' | 'date-asc' | 'name-asc' | 'name-desc';
 
+export const NO_BUNDLE = '__no_bundle__' as const;
+export type BundleFilterValue = string | null;
+
+export interface TagFilterItem {
+  tag: string;
+  exclude: boolean;
+}
+
+function parseTagParam(val: string | null): TagFilterItem[] {
+  if (!val) return [];
+  return val.split(',').filter(Boolean).map((s) => {
+    const exclude = s.startsWith('-');
+    return { tag: exclude ? s.slice(1) : s, exclude };
+  });
+}
+
+function serializeTagParam(items: TagFilterItem[]): string | null {
+  if (items.length === 0) return null;
+  return items.map(({ tag, exclude }) => (exclude ? `-${tag}` : tag)).join(',');
+}
+
+function parseBundleParam(val: string | null): { bundle: BundleFilterValue; exclude: boolean } {
+  if (!val) return { bundle: null, exclude: false };
+  const exclude = val.startsWith('-');
+  const raw = exclude ? val.slice(1) : val;
+  const bundle = raw === 'none' ? NO_BUNDLE : raw;
+  return { bundle, exclude };
+}
+
+function serializeBundleParam(bundle: BundleFilterValue, exclude: boolean): string | null {
+  if (!bundle) return null;
+  const val = bundle === NO_BUNDLE ? 'none' : bundle;
+  return exclude ? `-${val}` : val;
+}
+
 function readUrlParams() {
   const params = new URLSearchParams(window.location.search);
+  const bundleParsed = parseBundleParam(params.get('bundle'));
   return {
     q: params.get('q') ?? '',
-    tags: params.get('tags')?.split(',').filter(Boolean) ?? [],
-    bundle: params.get('bundle') ?? null,
+    tagFilters: parseTagParam(params.get('tags')),
+    bundle: bundleParsed.bundle,
+    bundleExclude: bundleParsed.exclude,
     fav: params.get('fav') === '1',
     sort: (params.get('sort') as SortOption) || 'date-desc',
   };
 }
 
-function writeUrlParams(q: string, tags: string[], bundle: string | null, fav: boolean, sort: SortOption) {
+function writeUrlParams(
+  q: string,
+  tagFilters: TagFilterItem[],
+  bundle: BundleFilterValue,
+  bundleExclude: boolean,
+  fav: boolean,
+  sort: SortOption
+) {
   const params = new URLSearchParams();
   if (q) params.set('q', q);
-  if (tags.length > 0) params.set('tags', tags.join(','));
-  if (bundle) params.set('bundle', bundle);
+  const tags = serializeTagParam(tagFilters);
+  if (tags) params.set('tags', tags);
+  const b = serializeBundleParam(bundle, bundleExclude);
+  if (b) params.set('bundle', b);
   if (fav) params.set('fav', '1');
   if (sort !== 'date-desc') params.set('sort', sort);
   const str = params.toString();
@@ -38,15 +84,18 @@ function writeUrlParams(q: string, tags: string[], bundle: string | null, fav: b
 }
 
 export default function App() {
-  const initial = typeof window !== 'undefined' ? readUrlParams() : { q: '', tags: [], bundle: null, fav: false, sort: 'date-desc' as SortOption };
+  const initial = typeof window !== 'undefined' ? readUrlParams() : { q: '', tagFilters: [], bundle: null, bundleExclude: false, fav: false, sort: 'date-desc' as SortOption };
   const [data, setData] = createSignal<AppData | null>(null);
   const [query, setQuery] = createSignal(initial.q);
-  const [selectedTags, setSelectedTags] = createSignal<string[]>(initial.tags);
+  const [tagFilters, setTagFilters] = createSignal<TagFilterItem[]>(initial.tagFilters);
   const [favoritesOnly, setFavoritesOnly] = createSignal(initial.fav);
-  const [selectedBundle, setSelectedBundle] = createSignal<string | null>(initial.bundle);
+  const [selectedBundle, setSelectedBundle] = createSignal<BundleFilterValue>(initial.bundle);
+  const [bundleExclude, setBundleExclude] = createSignal(initial.bundleExclude);
   const [sortBy, setSortBy] = createSignal<SortOption>(initial.sort);
   const [favorites, setFavorites] = createSignal<Set<string>>(new Set());
   const [showScrollTop, setShowScrollTop] = createSignal(false);
+  const [mobileBundlesExpanded, setMobileBundlesExpanded] = createSignal(false);
+  const [mobileTagsExpanded, setMobileTagsExpanded] = createSignal(false);
 
   onMount(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > window.innerHeight);
@@ -61,7 +110,7 @@ export default function App() {
   });
 
   createEffect(() => {
-    writeUrlParams(query(), selectedTags(), selectedBundle(), favoritesOnly(), sortBy());
+    writeUrlParams(query(), tagFilters(), selectedBundle(), bundleExclude(), favoritesOnly(), sortBy());
   });
 
   const toggleFavorite = (id: string) => {
@@ -92,9 +141,10 @@ export default function App() {
       );
     }
 
-    if (selectedTags().length > 0) {
+    const tags = tagFilters();
+    if (tags.length > 0) {
       results = results.filter((b) =>
-        selectedTags().every((tag) => b.tags.includes(tag))
+        tags.every(({ tag, exclude }) => (exclude ? !b.tags.includes(tag) : b.tags.includes(tag)))
       );
     }
 
@@ -103,8 +153,15 @@ export default function App() {
     }
 
     const bundle = selectedBundle();
+    const bundleExc = bundleExclude();
     if (bundle) {
-      results = results.filter((b) => (b.bundles ?? []).includes(bundle));
+      if (bundle === NO_BUNDLE) {
+        const hasNoBundle = (b: Bookmark) => (b.bundles ?? []).length === 0;
+        results = results.filter((b) => (bundleExc ? !hasNoBundle(b) : hasNoBundle(b)));
+      } else {
+        const inBundle = (b: Bookmark) => (b.bundles ?? []).includes(bundle);
+        results = results.filter((b) => (bundleExc ? !inBundle(b) : inBundle(b)));
+      }
     }
 
     return results;
@@ -143,7 +200,7 @@ export default function App() {
         counts.set(tag, (counts.get(tag) ?? 0) + 1);
       }
     }
-    for (const tag of selectedTags()) {
+    for (const { tag } of tagFilters()) {
       if (!counts.has(tag)) counts.set(tag, 0);
     }
     return Array.from(counts.entries())
@@ -154,14 +211,54 @@ export default function App() {
   const handleSearch = (q: string) => { setQuery(q); };
   const handleClearSearch = () => { setQuery(''); };
   const handleTagToggle = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
+    setTagFilters((prev) => {
+      const idx = prev.findIndex((t) => t.tag === tag);
+      if (idx >= 0) return prev.filter((_, i) => i !== idx);
+      return [...prev, { tag, exclude: false }];
+    });
   };
-  const handleClearTags = () => { setSelectedTags([]); };
+  const handleTagSetInclude = (tag: string) => {
+    setTagFilters((prev) => {
+      const idx = prev.findIndex((t) => t.tag === tag);
+      if (idx >= 0) {
+        if (prev[idx].exclude) return prev.map((t, i) => (i === idx ? { ...t, exclude: false } : t));
+        return prev.filter((_, i) => i !== idx);
+      }
+      return [...prev, { tag, exclude: false }];
+    });
+  };
+  const handleTagSetExclude = (tag: string) => {
+    setTagFilters((prev) => {
+      const idx = prev.findIndex((t) => t.tag === tag);
+      if (idx >= 0) {
+        if (!prev[idx].exclude) return prev.map((t, i) => (i === idx ? { ...t, exclude: true } : t));
+        return prev.filter((_, i) => i !== idx);
+      }
+      return [...prev, { tag, exclude: true }];
+    });
+  };
+  const handleClearTags = () => { setTagFilters([]); };
   const handleToggleFavorites = () => { setFavoritesOnly((prev) => !prev); };
   const handleTagClick = (tag: string) => {
-    if (!selectedTags().includes(tag)) handleTagToggle(tag);
+    if (!tagFilters().some((t) => t.tag === tag)) handleTagToggle(tag);
+  };
+  const handleBundleSetInclude = (bundle: BundleFilterValue) => {
+    if (selectedBundle() === bundle && !bundleExclude()) {
+      setSelectedBundle(null);
+      setBundleExclude(false);
+    } else {
+      setSelectedBundle(bundle);
+      setBundleExclude(false);
+    }
+  };
+  const handleBundleSetExclude = (bundle: BundleFilterValue) => {
+    if (selectedBundle() === bundle && bundleExclude()) {
+      setSelectedBundle(null);
+      setBundleExclude(false);
+    } else {
+      setSelectedBundle(bundle);
+      setBundleExclude(true);
+    }
   };
 
   return (
@@ -171,8 +268,9 @@ export default function App() {
           <h1
             onClick={() => {
               setQuery('');
-              setSelectedTags([]);
+              setTagFilters([]);
               setSelectedBundle(null);
+              setBundleExclude(false);
               setFavoritesOnly(false);
               setSortBy('date-desc');
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -230,16 +328,25 @@ export default function App() {
             </div>
 
             <Show when={data() && data()!.bundles.length > 0}>
-              <div>
-                <div class="flex items-center gap-1 mb-1.5">
-                  <svg class="w-3 h-3 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+              <div class="border border-amber-200 dark:border-amber-800 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setMobileBundlesExpanded((p) => !p)}
+                  class="w-full flex items-center justify-between gap-2 px-3 py-2 text-left hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors"
+                >
+                  <div class="flex items-center gap-1">
+                    <svg class="w-3 h-3 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                    </svg>
+                    <span class="text-[10px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide">Bundles</span>
+                  </div>
+                  <svg class="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 transition-transform" classList={{ 'rotate-180': mobileBundlesExpanded() }} fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                   </svg>
-                  <span class="text-[10px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide">Bundles</span>
-                </div>
-                <div class="flex flex-wrap gap-1.5">
+                </button>
+                <Show when={mobileBundlesExpanded()}>
+                  <div class="px-3 pb-3 pt-2 flex flex-wrap gap-1.5 border-t border-amber-200 dark:border-amber-800">
                   <button
-                    onClick={() => setSelectedBundle(null)}
+                    onClick={() => { setSelectedBundle(null); setBundleExclude(false); }}
                     class="px-2 py-0.5 text-[11px] rounded-full border transition-colors"
                     classList={{
                       'bg-amber-500 border-amber-500 text-white dark:bg-amber-600 dark:border-amber-600': !selectedBundle(),
@@ -249,29 +356,97 @@ export default function App() {
                     Todos
                   </button>
                   <For each={data()!.bundles}>
-                    {(bundle) => (
-                      <button
-                        onClick={() => setSelectedBundle(bundle)}
-                        class="px-2 py-0.5 text-[11px] rounded-full border transition-colors flex items-center gap-1"
-                        classList={{
-                          'bg-amber-500 border-amber-500 text-white dark:bg-amber-600 dark:border-amber-600': selectedBundle() === bundle,
-                          'border-amber-200 text-amber-700 dark:border-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950': selectedBundle() !== bundle,
-                        }}
-                      >
-                        <svg class="w-2.5 h-2.5 shrink-0 opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
-                        </svg>
-                        {bundle}
-                      </button>
-                    )}
+                    {(bundle) => {
+                      const isSelected = () => selectedBundle() === bundle;
+                      return (
+                        <span class="inline-flex items-center gap-0.5">
+                          <button
+                            onClick={() => { setSelectedBundle(bundle); setBundleExclude(false); }}
+                            class="px-2 py-0.5 text-[11px] rounded-full border transition-colors flex items-center gap-1"
+                            classList={{
+                              'bg-amber-500 border-amber-500 text-white dark:bg-amber-600 dark:border-amber-600': isSelected(),
+                              'border-amber-200 text-amber-700 dark:border-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950': !isSelected(),
+                            }}
+                          >
+                            <svg class="w-2.5 h-2.5 shrink-0 opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                            </svg>
+                            {bundle}
+                          </button>
+                          <button
+                            onClick={() => handleBundleSetInclude(bundle)}
+                            title="Incluir"
+                            class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-medium transition-colors shrink-0"
+                            classList={{
+                              'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400': isSelected() && !bundleExclude(),
+                              'text-emerald-600/70 dark:text-emerald-500/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/50': !isSelected() || bundleExclude(),
+                            }}
+                          >
+                            +
+                          </button>
+                          <button
+                            onClick={() => handleBundleSetExclude(bundle)}
+                            title="Excluir"
+                            class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-medium transition-colors shrink-0"
+                            classList={{
+                              'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400': isSelected() && bundleExclude(),
+                              'text-rose-600/70 dark:text-rose-500/60 hover:bg-rose-50 dark:hover:bg-rose-950/50': !isSelected() || !bundleExclude(),
+                            }}
+                          >
+                            −
+                          </button>
+                        </span>
+                      );
+                    }}
                   </For>
-                </div>
+                  <span class="inline-flex items-center gap-0.5">
+                    <button
+                      onClick={() => { setSelectedBundle(NO_BUNDLE); setBundleExclude(false); }}
+                      class="px-2 py-0.5 text-[11px] rounded-full border transition-colors flex items-center gap-1"
+                      classList={{
+                        'bg-amber-500 border-amber-500 text-white dark:bg-amber-600 dark:border-amber-600': selectedBundle() === NO_BUNDLE,
+                        'border-amber-200 text-amber-700 dark:border-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950': selectedBundle() !== NO_BUNDLE,
+                      }}
+                    >
+                      <svg class="w-2.5 h-2.5 shrink-0 opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                      </svg>
+                      Sem bundle
+                    </button>
+                    <button
+                      onClick={() => handleBundleSetInclude(NO_BUNDLE)}
+                      title="Incluir"
+                      class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-medium transition-colors shrink-0"
+                      classList={{
+                        'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400': selectedBundle() === NO_BUNDLE && !bundleExclude(),
+                        'text-emerald-600/70 dark:text-emerald-500/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/50': selectedBundle() !== NO_BUNDLE || bundleExclude(),
+                      }}
+                    >
+                      +
+                    </button>
+                    <button
+                      onClick={() => handleBundleSetExclude(NO_BUNDLE)}
+                      title="Excluir"
+                      class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-medium transition-colors shrink-0"
+                      classList={{
+                        'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400': selectedBundle() === NO_BUNDLE && bundleExclude(),
+                        'text-rose-600/70 dark:text-rose-500/60 hover:bg-rose-50 dark:hover:bg-rose-950/50': selectedBundle() !== NO_BUNDLE || !bundleExclude(),
+                      }}
+                    >
+                      −
+                    </button>
+                  </span>
+                  </div>
+                </Show>
               </div>
             </Show>
 
             <Show when={availableTags().length > 0}>
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
+              <div class="border border-verde-belic-200 dark:border-verde-belic-800 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setMobileTagsExpanded((p) => !p)}
+                  class="w-full flex items-center justify-between gap-2 px-3 py-2 text-left hover:bg-verde-belic-50 dark:hover:bg-verde-belic-950/30 transition-colors"
+                >
                   <div class="flex items-center gap-1">
                     <svg class="w-3 h-3 text-verde-belic-500 dark:text-verde-belic-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
@@ -279,35 +454,69 @@ export default function App() {
                     </svg>
                     <span class="text-[10px] font-semibold text-verde-belic-600 dark:text-verde-belic-400 uppercase tracking-wide">Tags</span>
                   </div>
-                  {selectedTags().length > 0 && (
-                    <button
-                      onClick={handleClearTags}
-                      class="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                    >
-                      Limpar
-                    </button>
-                  )}
-                </div>
-                <div class="flex flex-wrap gap-1">
+                  <div class="flex items-center gap-2">
+                    {tagFilters().length > 0 && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleClearTags(); }}
+                        class="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        Limpar
+                      </button>
+                    )}
+                    <svg class="w-3.5 h-3.5 text-verde-belic-500 dark:text-verde-belic-400 transition-transform" classList={{ 'rotate-180': mobileTagsExpanded() }} fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </div>
+                </button>
+                <Show when={mobileTagsExpanded()}>
+                  <div class="px-3 pb-3 pt-2 flex flex-wrap gap-1 border-t border-verde-belic-200 dark:border-verde-belic-800">
                   <For each={availableTags()}>
                     {(t) => {
-                      const isSelected = () => selectedTags().includes(t.tag);
+                      const tf = () => tagFilters().find((f) => f.tag === t.tag);
+                      const isSelected = () => !!tf();
+                      const isExclude = () => tf()?.exclude ?? false;
                       return (
-                        <button
-                          onClick={() => handleTagToggle(t.tag)}
-                          class="px-2 py-0.5 text-[11px] rounded-full border transition-colors"
-                          classList={{
-                            'bg-verde-belic-600 border-verde-belic-600 text-white': isSelected(),
-                            'border-verde-belic-200 text-verde-belic-700 dark:border-verde-belic-700 dark:text-verde-belic-300': !isSelected(),
-                          }}
-                        >
-                          {t.tag}
-                          <span class="opacity-50 ml-0.5">{t.count}</span>
-                        </button>
+                        <span class="inline-flex items-center gap-0.5">
+                          <button
+                            onClick={() => handleTagToggle(t.tag)}
+                            class="px-2 py-0.5 text-[11px] rounded-full border transition-colors"
+                            classList={{
+                              'bg-verde-belic-600 border-verde-belic-600 text-white': isSelected() && !isExclude(),
+                              'bg-red-500/80 border-red-500/80 text-white': isSelected() && isExclude(),
+                              'border-verde-belic-200 text-verde-belic-700 dark:border-verde-belic-700 dark:text-verde-belic-300': !isSelected(),
+                            }}
+                          >
+                            {t.tag}
+                            <span class="opacity-50 ml-0.5">{t.count}</span>
+                          </button>
+                          <button
+                            onClick={() => handleTagSetInclude(t.tag)}
+                            title="Incluir"
+                            class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-medium transition-colors shrink-0"
+                            classList={{
+                              'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400': isSelected() && !isExclude(),
+                              'text-emerald-600/70 dark:text-emerald-500/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/50': !isSelected() || isExclude(),
+                            }}
+                          >
+                            +
+                          </button>
+                          <button
+                            onClick={() => handleTagSetExclude(t.tag)}
+                            title="Excluir"
+                            class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-medium transition-colors shrink-0"
+                            classList={{
+                              'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400': isSelected() && isExclude(),
+                              'text-rose-600/70 dark:text-rose-500/60 hover:bg-rose-50 dark:hover:bg-rose-950/50': !isSelected() || !isExclude(),
+                            }}
+                          >
+                            −
+                          </button>
+                        </span>
                       );
                     }}
                   </For>
-                </div>
+                  </div>
+                </Show>
               </div>
             </Show>
           </div>
@@ -369,15 +578,20 @@ export default function App() {
               <BundleFilter
                 bundles={data()!.bundles}
                 selectedBundle={selectedBundle()}
-                onSelectBundle={(id) => { setSelectedBundle(id); }}
+                bundleExclude={bundleExclude()}
+                onSelectBundle={(id) => { setSelectedBundle(id); setBundleExclude(false); }}
+                onSetInclude={handleBundleSetInclude}
+                onSetExclude={handleBundleSetExclude}
               />
             </Show>
 
             <Show when={availableTags().length > 0}>
               <TagFilter
                 tags={availableTags()}
-                selectedTags={selectedTags()}
+                tagFilters={tagFilters()}
                 onToggle={handleTagToggle}
+                onSetInclude={handleTagSetInclude}
+                onSetExclude={handleTagSetExclude}
                 onClear={handleClearTags}
               />
             </Show>
