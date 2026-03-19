@@ -1,0 +1,91 @@
+name: Notify Discord on New Link
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          # Use the push event range for diffing
+          # If it's a new branch push, before might be 00000000, fallback to HEAD~1
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+          
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || [ -z "$BEFORE" ]; then
+            FILES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD | grep 'gerenciador-bookmarks/src/content/links/.*\.mdx$' || true)
+          else
+            FILES=$(git diff --name-only --diff-filter=A $BEFORE $AFTER | grep 'gerenciador-bookmarks/src/content/links/.*\.mdx$' || true)
+          fi
+          
+          if [ -z "$FILES" ]; then
+            echo "Nenhum novo link adicionado no range de commits."
+            exit 0
+          fi
+
+          # Use Node.js to parse and send
+          FILES="$FILES" node -e "
+          const fs = require('fs');
+          const https = require('https');
+          const url_parser = require('url');
+
+          const files = process.env.FILES.split('\n').filter(Boolean);
+          const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+
+          files.forEach(file => {
+            try {
+              if (!fs.existsSync(file)) return;
+              const content = fs.readFileSync(file, 'utf8');
+              const matchName = content.match(/^name:\s*\"?(.*?)\"?$/m);
+              const matchLink = content.match(/^link:\s*\"?(.*?)\"?$/m);
+              const matchDesc = content.match(/^description:\s*\"?(.*?)\"?$/m);
+
+              const name = matchName ? matchName[1] : 'Sem nome';
+              const url = matchLink ? matchLink[1] : '';
+              const desc = matchDesc ? matchDesc[1] : '';
+
+              const payload = JSON.stringify({
+                embeds: [{
+                  title: '🚀 Novo link adicionado!',
+                  color: 5814783,
+                  fields: [
+                    { name: 'Nome', value: name },
+                    { name: 'URL', value: url },
+                    { name: 'Descrição', value: desc }
+                  ],
+                  timestamp: new Date().toISOString()
+                }]
+              });
+
+              const options = url_parser.parse(webhookUrl);
+              options.method = 'POST';
+              options.headers = {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(payload)
+              };
+
+              const req = https.request(options, (res) => {
+                console.log('Status Code: ' + res.statusCode);
+              });
+
+              req.on('error', (e) => {
+                console.error(e);
+              });
+
+              req.write(payload);
+              req.end();
+              console.log('Notificação enviada para: ' + name);
+            } catch (err) {
+              console.error('Erro ao processar arquivo ' + file + ':', err);
+            }
+          });
+          "
