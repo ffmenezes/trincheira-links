@@ -10,14 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           # Use the push event range for diffing
-          # If it's a new branch push, before might be 00000000, fallback to HEAD~1
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.event.after }}"
           
@@ -35,57 +34,63 @@ jobs:
           # Use Node.js to parse and send
           FILES="$FILES" node -e "
           const fs = require('fs');
-          const https = require('https');
-          const url_parser = require('url');
 
-          const files = process.env.FILES.split('\n').filter(Boolean);
-          const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+          async function notify() {
+            const files = process.env.FILES.split('\n').filter(Boolean);
+            const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
-          files.forEach(file => {
-            try {
-              if (!fs.existsSync(file)) return;
-              const content = fs.readFileSync(file, 'utf8');
-              const matchName = content.match(/^name:\s*\"?(.*?)\"?$/m);
-              const matchLink = content.match(/^link:\s*\"?(.*?)\"?$/m);
-              const matchDesc = content.match(/^description:\s*\"?(.*?)\"?$/m);
+            for (const file of files) {
+              try {
+                console.log('--- Processando: ' + file + ' ---');
+                if (!fs.existsSync(file)) {
+                  console.log('Arquivo não encontrado no disco: ' + file);
+                  continue;
+                }
+                
+                const contentFile = fs.readFileSync(file, 'utf8');
+                
+                const getValue = (key) => {
+                  const regex = new RegExp('^' + key + ':\\s*(.*)$', 'm');
+                  const match = contentFile.match(regex);
+                  if (!match) return null;
+                  return match[1].trim().replace(/^[\"']|[\"']$/g, '').trim();
+                };
 
-              const name = matchName ? matchName[1] : 'Sem nome';
-              const url = matchLink ? matchLink[1] : '';
-              const desc = matchDesc ? matchDesc[1] : '';
+                const name = getValue('name') || 'Sem nome';
+                const url = getValue('link') || 'Sem URL';
+                const desc = getValue('description') || 'Sem descrição';
 
-              const payload = JSON.stringify({
-                embeds: [{
-                  title: '🚀 Novo link adicionado!',
-                  color: 5814783,
-                  fields: [
-                    { name: 'Nome', value: name },
-                    { name: 'URL', value: url },
-                    { name: 'Descrição', value: desc }
-                  ],
-                  timestamp: new Date().toISOString()
-                }]
-              });
+                console.log('Dados extraídos:', { name, url });
 
-              const options = url_parser.parse(webhookUrl);
-              options.method = 'POST';
-              options.headers = {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(payload)
-              };
+                const msg = '🚀 **Novo link adicionado!**\n\n' +
+                            '**Nome:** ' + name + '\n' +
+                            '**Link:** ' + url + '\n' +
+                            '**Descrição:** ' + desc;
 
-              const req = https.request(options, (res) => {
-                console.log('Status Code: ' + res.statusCode);
-              });
+                const payload = {
+                  username: 'Trincheira Links',
+                  avatar_url: 'https://raw.githubusercontent.com/ffmenezes/trincheira-links/master/gerenciador-bookmarks/public/favicon.png',
+                  content: msg
+                };
 
-              req.on('error', (e) => {
-                console.error(e);
-              });
+                const response = await fetch(webhookUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
 
-              req.write(payload);
-              req.end();
-              console.log('Notificação enviada para: ' + name);
-            } catch (err) {
-              console.error('Erro ao processar arquivo ' + file + ':', err);
+                if (response.ok) {
+                  console.log('✅ Notificação enviada: ' + name);
+                } else {
+                  console.error('❌ Erro no Discord: ' + response.status + ' ' + response.statusText);
+                  const errorData = await response.text();
+                  console.error('Detalhes:', errorData);
+                }
+              } catch (err) {
+                console.error('❌ Erro crítico em ' + file + ':', err);
+              }
             }
-          });
+          }
+
+          notify();
           "
