@@ -14,6 +14,7 @@ dist/
 
 # Temp files
 .temp/
+*.log
 
 # OS files
 .DS_Store
@@ -22,3 +23,4 @@ Thumbs.db
 # Environment
 .env
 .env.*
+
