@@ -11,7 +11,11 @@ gh repo fork ffmenezes/trincheira-links --clone
 cd trincheira-links
 ```
 
-### 2. Crie o arquivo do link
+### 2. Pesquise sobre o link
+
+Antes de adicionar, **sempre pesquise sobre o link na internet** (Google, GitHub, Twitter/X) para entender o contexto real, propósito e como a comunidade o utiliza. Isso garante que a descrição seja precisa e as tags sigam a taxonomia correta.
+
+### 3. Crie o arquivo do link
 
 Crie um arquivo em `gerenciador-bookmarks/src/content/links/` com o formato:
 
@@ -21,7 +25,7 @@ nome-do-site-em-slug.mdx
 
 Exemplos: `supabase.mdx`, `jwt-io-debugger.mdx`, `guia-definitivo-do-regex.mdx`
 
-### 3. Preencha o frontmatter
+### 4. Preencha o frontmatter
 
 ```mdx
 ---
@@ -53,7 +57,7 @@ bundles: []
 | `favorite` | Nao | Sempre `false` no PR |
 | `bundles` | Nao | Array de bundles (geralmente vazio) |
 
-### 4. Abra o PR
+### 5. Abra o PR
 
 ```bash
 git checkout -b add/nome-do-site
@@ -72,7 +76,7 @@ Preciso que voce gere um arquivo .mdx para o Trincheira Links (um gerenciador de
 
 A URL do site e: [COLE A URL AQUI]
 
-Acesse/analise o site e gere o arquivo seguindo EXATAMENTE este formato:
+Acesse/analise o site, **pesquise sobre o link na internet para entender seu contexto real (Google, GitHub, Twitter/X)** e gere o arquivo seguindo EXATAMENTE este formato:
 
 ```mdx
 ---

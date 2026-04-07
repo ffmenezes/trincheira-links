@@ -16,9 +16,10 @@ Repositorio colaborativo de links uteis da [trincheira.dev](https://trincheira.d
 
 ## Como adicionar um link
 
-1. Faca fork do repositorio
-2. Crie um arquivo `.mdx` em `gerenciador-bookmarks/src/content/links/`
-3. Abra um Pull Request
+1. **Pesquise o link na internet** (Google, GitHub, Twitter/X) para entender o contexto real e propósito.
+2. Faca fork do repositorio
+3. Crie um arquivo `.mdx` em `gerenciador-bookmarks/src/content/links/` seguindo a taxonomia de tags.
+4. Abra um Pull Request
 
 Veja o guia completo em [CONTRIBUTING.md](../CONTRIBUTING.md).
 
