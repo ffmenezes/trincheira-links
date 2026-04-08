@@ -62,10 +62,8 @@ jobs:
 
                 console.log('Dados extraídos:', { name, url });
 
-                const msg = '🆕 **Novo link adicionado em https://links.trincheira.dev/**\n' +
-                            name + '\n' +
-                            url + '\n' +
-                            desc;
+                const msg = '🆕 Novo link adicionado em https://links.trincheira.dev/\n' +
+                            '**' + name + '**' + ' (' + url + ')' + '\n' + desc;
 
                 const payload = {
                   username: 'Trincheira Links',
