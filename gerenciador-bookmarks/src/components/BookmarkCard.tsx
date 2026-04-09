@@ -9,11 +9,8 @@ interface Props {
 
 export default function BookmarkCard(props: Props) {
   return (
-    <a
-      href={props.bookmark.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="group flex border rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md dark:bg-[#242424]"
+    <div
+      class="group relative flex border rounded-lg overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md dark:bg-[#242424]"
       classList={{
         'border-yellow-400/60 dark:border-yellow-500/40 hover:border-yellow-500 dark:hover:border-yellow-500/60': props.isFavorite,
         'border-verde-belic-200 dark:border-transparent hover:border-verde-belic-400 dark:hover:border-verde-belic-700': !props.isFavorite,
@@ -32,7 +29,14 @@ export default function BookmarkCard(props: Props) {
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-1.5">
               <h3 class="font-semibold text-verde-belic-600 dark:text-verde-belic-400 group-hover:text-verde-belic-500 truncate">
-                {props.bookmark.name}
+                <a
+                  href={props.bookmark.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="after:absolute after:inset-0 outline-none focus:after:ring-2 focus:after:ring-inset focus:after:ring-verde-belic-500"
+                >
+                  {props.bookmark.name}
+                </a>
               </h3>
               <button
                 onClick={(e) => {
@@ -40,7 +44,7 @@ export default function BookmarkCard(props: Props) {
                   e.stopPropagation();
                   props.onToggleFavorite(props.bookmark.id);
                 }}
-                class="shrink-0 transition-colors"
+                class="relative z-10 shrink-0 transition-colors"
                 classList={{
                   'text-yellow-500 hover:text-yellow-600': props.isFavorite,
                   'text-gray-300 hover:text-yellow-400 dark:text-gray-600 dark:hover:text-yellow-400': !props.isFavorite,
@@ -89,7 +93,7 @@ export default function BookmarkCard(props: Props) {
                   e.stopPropagation();
                   props.onTagClick(tag);
                 }}
-                class="px-2 py-0.5 text-xs rounded-full bg-verde-belic-100 dark:bg-verde-belic-950 text-verde-belic-700 dark:text-verde-belic-400 hover:bg-verde-belic-200 dark:hover:bg-verde-belic-900 transition-colors"
+                class="relative z-10 px-2 py-0.5 text-xs rounded-full bg-verde-belic-100 dark:bg-verde-belic-950 text-verde-belic-700 dark:text-verde-belic-400 hover:bg-verde-belic-200 dark:hover:bg-verde-belic-900 transition-colors"
               >
                 {tag}
               </button>
@@ -126,6 +130,6 @@ export default function BookmarkCard(props: Props) {
           </div>
         )}
       </div>
-    </a>
+    </div>
   );
 }
