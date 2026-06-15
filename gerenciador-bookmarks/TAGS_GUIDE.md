@@ -14,6 +14,7 @@ Escolha **uma** tag que represente a grande área do link.
 - `nocode` (Ferramentas visuais, construção sem código)
 - `negocios` (Empreendedorismo, Marketing, Vendas, Produtividade)
 - `conteudo` (Material de consumo passivo ou estudo genérico)
+- `estudo` (Material educacional, aprendizado, idiomas)
 
 ### Eixo B: Especialidade ou Formato (A "Prateleira")
 Escolha as tags que melhor detalham a área ou o formato do link dentro do Domínio.
@@ -23,8 +24,8 @@ Escolha as tags que melhor detalham a área ou o formato do link dentro do Domí
 
 ### Eixo C: Assunto Específico / Ferramenta (A "Etiqueta" do Item)
 Use tags altamente específicas para facilitar a busca pontual. Essa é a camada mais detalhada.
-- **Tipos de Dados / Tecnologias:** `regex`, `yaml`, `json`, `jwt`, `pdf`, `video`, `mockdata`, `webhook`.
-- **Funções Específicas:** `qrcode`, `screenshots`, `transcricao`, `acessibilidade`, `dev-tools`, `ferramentas`.
+- **Tipos de Dados / Tecnologias:** `regex`, `yaml`, `json`, `jwt`, `pdf`, `video`, `audio`, `mockdata`, `webhook`, `timezone`.
+- **Funções Específicas:** `qrcode`, `screenshots`, `transcricao`, `acessibilidade`, `idiomas`, `dev-tools`, `ferramentas`.
 - **Marcas, Escolas e Ecossistemas:** `tech12k`, `saas7d`, `bmad`, `shadcn`, `supabase`, `postgres`, `semcodar`, `bubble`.
 
 ---
