@@ -110,7 +110,7 @@ export default function BookmarkCard(props: Props) {
           <img
             src={props.bookmark.ogthumb}
             alt={`Preview de ${props.bookmark.name}`}
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover object-left-top"
             loading="lazy"
           />
         ) : (

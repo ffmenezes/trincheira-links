@@ -10,5 +10,10 @@ export default defineConfig({
     solid(),
     tailwind(),
     mdx()
-  ]
+  ],
+  vite: {
+    server: {
+      allowedHosts: ['.trycloudflare.com']
+    }
+  }
 });
