@@ -87,6 +87,23 @@ git commit -m "add: 3 links [skip discord]"
 
 The guard reads `github.event.head_commit.message` — the **last** commit of the push. On a multi-commit push, only that message is checked, so put the marker on the final commit (or on the merge commit).
 
+### Tag taxonomy
+
+Tags are free-form (no enum in `config.ts`), so consistency is by convention. Two orthogonal kinds:
+
+**Subject tags** — what the link *is*. The three that overlap most often:
+
+| Tag | Meaning | Examples |
+|---|---|---|
+| `dev` | Content or resource *about* development: blog, channel, framework, study repo | `akitaonrails`, `astro`, `build-your-own-x` |
+| `dev-tools` | Technical utility a dev *uses*: debugger, viewer, converter, CLI | `jwt-io-debugger`, `yamllint`, `webhook-cool` |
+| `ferramentas` | General-purpose utility, not dev-specific | `iloveimg`, `freeconvert` |
+| `terminal` | CLI, TUI, shell, multiplexers | `tmux`, `herdr` |
+
+`ferramentas` + `dev-tools` on the same link is redundant — pick one.
+
+**Source tags** — where the link lives. These stack freely on top of any subject tag: `github`, `blog`, `youtube`, `reddit`, `newsletter`.
+
 ## OpenSpec
 
 The `openspec/` directory contains spec-driven change proposals:
