@@ -6,6 +6,9 @@ on:
 
 jobs:
   notify:
+    # Silencia o anúncio deste push: inclua [skip discord] na mensagem do commit.
+    if: >-
+      !contains(github.event.head_commit.message, '[skip discord]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

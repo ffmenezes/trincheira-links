@@ -77,6 +77,16 @@ gerenciador-bookmarks/
 5. **createdAt:** Use full ISO 8601 datetime with time (e.g. `2026-03-07T14:30:00.000Z`), not just `00:00:00.000Z`. The time matters for "Mais recentes" sort — identical timestamps cause ties.
 6. Submit a PR
 
+### Discord announcement
+
+`.github/workflows/notify-discord.yml` posts one message per newly added `.mdx` on every push to `master`. To stay silent, put `[skip discord]` in the commit message:
+
+```bash
+git commit -m "add: 3 links [skip discord]"
+```
+
+The guard reads `github.event.head_commit.message` — the **last** commit of the push. On a multi-commit push, only that message is checked, so put the marker on the final commit (or on the merge commit).
+
 ## OpenSpec
 
 The `openspec/` directory contains spec-driven change proposals:
