@@ -1,0 +1,18 @@
+---
+name: "Treg"
+link: "https://treg.to/"
+description: "O OpenRouter para ferramentas de agente: ~2.600 endpoints de 47 provedores atrás de um token só."
+createdAt: "2026-08-21T16:20:00.000Z"
+tags: ["agents", "ai", "api", "dev-tools"]
+favicon: "https://www.google.com/s2/favicons?domain=treg.to&sz=32"
+ogthumb: "/ogthumbs/treg.webp"
+creator: "admin"
+favorite: false
+bundles: []
+---
+
+O gargalo do agente raramente é o modelo — é que a ferramenta que ele precisa mora atrás de uma assinatura de US$ 139/mês. Semrush, Moz, Crunchbase, Apollo: cada uma quer cadastro, cartão e uma chave própria pra você descobrir se o dado sequer serve. O Treg é a resposta óbvia e chata pra isso: **OpenRouter, só que pra ferramenta em vez de modelo**. Um token, uma base URL, e o agente alcança ~2.600 endpoints catalogados de ~47 provedores — SEO, backlink, enriquecimento de pessoa e empresa, analytics de social, gestão de anúncio, scraping — pagando por chamada, a partir de fração de centavo. Time novo já nasce com US$ 1,00 de saldo pra testar sem cadastrar cartão.
+
+Funciona em duas camadas. O **catálogo** são endpoints que o Treg serve com a chave *dele*, debitados do seu saldo pré-pago — você nunca cria conta no provedor. As **ferramentas registradas** são as suas: conta paga que você já tem, conexão OAuth (com refresh automático), CLI de fornecedor (`stripe`, `gh`, `vercel`) ou skill própria. Quando existe chave sua, ela ganha da do Treg e a chamada não é medida. Os segredos ficam cifrados no servidor com Fernet e são injetados na hora da requisição — não trafegam pro caller, o que resolve o problema real de dar credencial de produção pra um agente. Ainda tem um sistema de *skills*, que empacota ferramentas + segredos + documentação numa receita compartilhável entre o time.
+
+Instalação por `curl -fsSL https://treg.to/install.sh | sh`, depois `treg login` e `treg catalog search "backlinks for a domain"` pra achar o endpoint em linguagem natural. Existe plugin de Claude Code (`/plugin marketplace add superdesigndev/treg`) e pacote npm via `npx skills add superdesigndev/treg`. Backend em Python com FastAPI e SQLModel, SQLite no dev e Postgres em produção, dashboard web e CLI cobrindo o mesmo CRUD. É da mesma turma do [Superdesign](https://superdesign.dev), e o código está aberto em [superdesigndev/treg](https://github.com/superdesigndev/treg). Duas ressalvas antes de apostar: a licença é Apache 2.0 **com adendo comercial** — self-host e uso interno liberados, mas oferecer como serviço gerenciado ou embutir em produto pago exige autorização escrita; e o modelo pré-pago significa que o custo do agente vira uma variável que alguém precisa monitorar.
