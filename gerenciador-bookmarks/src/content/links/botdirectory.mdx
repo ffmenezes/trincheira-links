@@ -1,0 +1,20 @@
+---
+name: "Bot Directory"
+link: "https://botdirectory.ai/"
+description: "Centenas de prompts prontos para criar bots para o Grok ou qualquer AI Agent."
+createdAt: "2026-08-22T18:40:00.000Z"
+tags: ["agents", "ai"]
+favicon: "https://www.google.com/s2/favicons?domain=botdirectory.ai&sz=32"
+ogthumb: "/ogthumbs/botdirectory.webp"
+creator: "admin"
+favorite: false
+bundles: []
+---
+
+A promessa de "agente que trabalha sozinho" trava sempre no mesmo lugar: você abre a tela em branco e não faz ideia do que pedir. O **Bot Directory** ataca exatamente esse vazio — é um catálogo de **229 prompts** de bot agendado, cada um escrito para você copiar, colar no seu agente e deixar que ele **se configure sozinho** como rotina recorrente. Nada de fluxograma, nó ou webhook: o "programa" é o parágrafo em inglês que descreve o que rodar, com que frequência e com quais ferramentas conectadas.
+
+O catálogo é navegável por categoria (Productivity, Sales, Marketing, Ops, Success, Personal) e por integração — Slack, Gmail, Notion, Linear, Salesforce, HubSpot, Stripe, GitHub, PostHog, Google Analytics e mais de 50 outras. Os bots vão do trivialmente útil (triagem de e-mail, briefing diário, atualização de CRM) ao bem específico: gestão de programa de afiliados, alerta de churn, correção de SEO, underwriting de imóvel, fábrica de shorts faceless. Cada página traz o prompt copiável, a categoria, as conexões exigidas e o crédito ao autor original — quase sempre um tweet, o que dá pra rastrear de onde a receita saiu.
+
+O alvo declarado é o **Grok Bot** e o **[Rakazo](https://rakazo.com/)** (alternativa open-source e self-hosted ao primeiro, do mesmo autor), mas os prompts são texto puro e funcionam em qualquer agente com agendamento e acesso a ferramentas. Há também uma API pública pra consultar o diretório programaticamente — e, sim, existe um bot no próprio catálogo que consome essa API.
+
+Tudo vive no GitHub em [elie222/botdirectory.ai](https://github.com/elie222/botdirectory.ai), sob MIT, da Inbox Zero Inc. — mesma casa do Elie Steinbock, do Inbox Zero. Contribuir é abrir um `.md` em `bots/` e mandar PR, ou simplesmente marcar [@botdirectoryai](https://x.com/botdirectoryai) no X com seu prompt, que o bot de menções abre o PR por você. Site em Astro, sem framework de UI. Duas ressalvas: o repositório nasceu em **agosto de 2026**, então é novíssimo e a curadoria ainda é rasa — muito prompt é variação de tema, e nenhum vem com garantia de que funciona no seu stack sem ajuste. E, como sempre nesse gênero, o prompt é a parte fácil: o trabalho real é conectar as credenciais e decidir o que o bot tem permissão de fazer sem você olhando.
