@@ -1,0 +1,22 @@
+---
+name: "Breakscale"
+link: "https://breakscale.tech/"
+description: "Simulador de system design onde você monta a arquitetura, aumenta a carga e assiste ela quebrar de verdade."
+createdAt: "2026-09-02T18:39:10.000Z"
+tags: ["dev", "devops", "github"]
+favicon: "https://www.google.com/s2/favicons?domain=breakscale.tech&sz=32"
+ogthumb: "/ogthumbs/breakscale.webp"
+creator: "admin"
+favorite: false
+bundles: []
+---
+
+Todo diagrama de system design de entrevista tem o mesmo problema: as caixinhas nunca falham. Você desenha load balancer, cache, fila e banco, todo mundo concorda que "escala", e ninguém nunca viu o desenho sob carga. O **Breakscale** inverte isso — você monta a topologia num canvas, arrasta um slider de **requests por segundo** e observa o sistema degradar em tempo real: p99 subindo, fila enchendo, circuit breaker abrindo, retry storm amplificando a carga até tudo virar 503.
+
+O diferencial é o motor: não é fórmula fechada de teoria de filas, é **simulação de eventos discretos**. Servidores têm slots finitos com FIFO real, o tempo de serviço varia por distribuição gama, trabalho abandonado continua consumindo capacidade, e os percentis (p50/p95/p99) são **medidos** da simulação, não estimados. Isso muda o que dá pra aprender: você vê *onde* a espera se acumula primeiro, e quase nunca é onde o diagrama sugere.
+
+São **33 componentes** — client, load balancer, CDN, edge compute, service, worker, fila, retry queue, cache, réplica de leitura, store shardado, object storage, search index, TSDB, grafo, vector DB, cold storage, stream broker, pub/sub, gateway WebSocket, serverless, rate limiter, load shedder, circuit breaker, bulkhead, autoscaler, failover regional, API gateway, service mesh e outros. Cada um tem uma descrição de uma linha que já é meio aula ("Splits data by key. A hot key ruins it", "Scales instantly, but cold starts cost", "Holds connections; they run out, not rps"). E há um glossário sob demanda pra p99, backpressure, consumer lag, sharding e companhia.
+
+Vêm **23 exemplos prontos**: 16 cenários didáticos que isolam um modo de falha por vez (Single Server, Cache Aside, Retry Storm, Rate Limited API, Circuit Breaker, Sharded Database com hot key, Autoscaling com atraso de provisionamento) e 7 reconstruções de arquiteturas reais — Netflix, Spotify, Discord, Uber, Twitter/X, Stripe e WhatsApp. O próprio projeto avisa que essas sete são **diagramas didáticos, não documentação oficial**, e declara o que modela e o que deixa de fora — honestidade rara nesse tipo de material.
+
+Roda inteiro no browser, sem cadastro. Open source (MIT) em [xevrion/breakscale](https://github.com/xevrion/breakscale), React + TypeScript + Vite sobre Bun, canvas em SVG escrito na mão e gráficos sem biblioteca. Vale como ferramenta de estudo pra entrevista de system design e, principalmente, como intuição: depois de ver um retry storm crescer no slider, você para de tratar retry como config inofensiva.
