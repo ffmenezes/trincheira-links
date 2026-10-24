@@ -1,0 +1,22 @@
+---
+name: "Xtracticle"
+link: "https://xtracticle.com/"
+description: "Baixa X Articles, threads e posts do X (Twitter) em PDF, Markdown, EPUB/Kindle ou texto — grátis, sem login, open source e com servidor MCP pra agentes lerem links do X."
+createdAt: "2026-10-24T14:37:12.000Z"
+tags: ["ai", "ferramentas", "mcp", "github"]
+favicon: "https://www.google.com/s2/favicons?domain=xtracticle.com&sz=32"
+ogthumb: "/ogthumbs/xtracticle.webp"
+creator: "admin"
+favorite: false
+bundles: []
+---
+
+Cola o link de um post do X e o **Xtracticle** devolve o conteúdo limpo no formato que você quiser: PDF A4 pronto pra imprimir (com imagens, link da fonte e numeração de página), Markdown (com YAML front-matter opcional), EPUB pra Kindle/Kobo/Apple Books, ZIP com Markdown + todas as imagens salvas localmente, ou `.txt`. Tem botão que abre direto uma nota nova no Obsidian.
+
+Funciona com os três tipos de conteúdo: **X Articles** (os posts longos de até 100 mil caracteres, convertidos bloco a bloco com títulos, listas, citações, código e imagens), **threads** (cola qualquer post — primeiro, do meio ou último — e ele acha a self-thread inteira e junta num documento numerado) e **posts avulsos** (com fotos, vídeo e post citado). Modo batch aceita até 20 links e devolve um ZIP.
+
+O atalho mais prático: trocar `x.com` por `xtracticle.com` na barra de endereço — `x.com/user/status/123` vira `xtracticle.com/user/status/123`. Também tem bookmarklet, atalho no share sheet do iPhone e PWA no Android.
+
+**Pra agentes**: Claude, ChatGPT e Cursor não conseguem abrir link do X sozinhos. O servidor MCP gratuito do Xtracticle resolve isso (lê post, thread ou Article como Markdown), e tem endpoint direto em `https://xtracticle.com/api/markdown/{post ID}` pra scripts. Ocupa o lugar do antigo tweet.md, que fazia a mesma troca de domínio.
+
+Sem conta, sem limite de uso, nada armazenado — busca o post público via API do [FxTwitter](https://github.com/FixTweet/FxTwitter) e monta o arquivo no navegador. Código aberto no [GitHub](https://github.com/ahmetdeveci3112-crypto/Xtracticle).
