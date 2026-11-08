@@ -1,0 +1,26 @@
+---
+name: "Executor"
+link: "https://github.com/UsefulSoftwareCo/executor"
+description: "Camada de integração pra agentes de IA: conecta APIs (OpenAPI, GraphQL), servidores MCP e funções próprias uma vez só e expõe tudo num único endpoint MCP, sem o agente ver as credenciais. Open source (MIT), local, self-host ou hospedado."
+createdAt: "2026-11-08T16:16:38.000Z"
+tags: ["ai", "agents", "mcp", "dev-tools", "github"]
+favicon: "https://www.google.com/s2/favicons?domain=executor.sh&sz=32"
+ogthumb: "/ogthumbs/executor.webp"
+creator: "admin"
+favorite: false
+bundles: []
+---
+
+Pensa num Zapier/Retool, só que movido a código e feito pro agente usar. Você conecta suas contas (chave de API ou login OAuth) **uma vez** no Executor, e qualquer cliente MCP — Claude Code, Codex, Cursor, ChatGPT — passa a usar esses serviços pelo mesmo endpoint. A credencial fica guardada no Executor e é anexada por dentro; o agente nunca vê a chave.
+
+Tudo gira em torno de **apps**: pequenos programas TypeScript que transformam uma conta em ferramentas. Um app pode embrulhar uma spec OpenAPI, fazer proxy de um servidor MCP remoto ou chamar uma API na mão — e também guardar dados, servir UI própria, rodar em background e pedir aprovação antes de fazer algo arriscado. Tem catálogo pra instalar, dá pra adicionar MCP remoto por URL ou pedir pro próprio agente escrever e publicar um app novo (cada deploy vira versão com rollback).
+
+**Code mode**: em vez de dezenas de tool calls, o agente recebe só duas ferramentas, `skills` (busca o que existe) e `execute` (roda um programa curto que chama quantos apps a tarefa precisar). As aprovações são por ferramenta: sempre, nunca, ou só quando o input parece arriscado — aprovadas no prompt do próprio cliente MCP ou numa página no navegador.
+
+Três jeitos de rodar, todos com os mesmos apps e o mesmo endpoint: hospedado em [app.executor.sh](https://app.executor.sh), local (`curl -fsSL https://executor.sh/docs/install.sh | sh` e depois `executor`, endpoint em `http://127.0.0.1:4312/mcp`) ou self-host num container Docker com banco embutido. No Claude Code:
+
+```sh
+claude mcp add --transport http --scope user executor 'https://mcp.executor.sh/mcp'
+```
+
+Criado pelo Rhys Sullivan, com apoio da Y Combinator. Site e docs em [executor.sh](https://executor.sh).
