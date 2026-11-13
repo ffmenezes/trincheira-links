@@ -1,0 +1,18 @@
+---
+name: "cobalt"
+link: "https://cobalt.tools/"
+description: "Downloader de mídia sem anúncio, rastreador nem paywall: cola o link (YouTube, TikTok, Instagram, X, Reddit, SoundCloud, Vimeo…) e baixa o vídeo, só o áudio ou o vídeo mudo. Open source (AGPL-3.0), com API e self-host."
+createdAt: "2026-11-13T14:20:00.000Z"
+tags: ["ferramentas", "video"]
+favicon: "https://www.google.com/s2/favicons?domain=cobalt.tools&sz=32"
+ogthumb: "/ogthumbs/cobalt.webp"
+creator: "admin"
+favorite: false
+bundles: []
+---
+
+A proposta está no próprio README: "um downloader de mídia que não te irrita". Você cola o link, escolhe o modo — **auto** (vídeo com áudio), **audio** (só o som) ou **mute** (vídeo sem som) — e pega o arquivo. Sem anúncio, sem pop-up, sem conta.
+
+Não guarda nada em cache: funciona como um proxy que busca a mídia na origem e repassa pra você. Só baixa conteúdo público. Também tem a aba **remux**, que reempacota um arquivo local no navegador.
+
+O código é open source no [GitHub da imputnet](https://github.com/imputnet/cobalt) (AGPL-3.0, ~46 mil estrelas), com API documentada e instruções pra rodar a sua própria instância. Vale ter isso em mente porque o YouTube costuma bloquear a instância pública de tempos em tempos; quando isso acontece, uma instância self-hosted ou o `yt-dlp` resolvem.
