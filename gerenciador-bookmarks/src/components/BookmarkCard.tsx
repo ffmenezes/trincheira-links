@@ -105,16 +105,21 @@ export default function BookmarkCard(props: Props) {
         </div>
       </div>
 
-      <div class="hidden sm:block w-40 shrink-0 bg-gray-100 dark:bg-[#1a1a1a]">
+      <div class="hidden sm:flex items-center w-56 shrink-0 bg-gray-100 dark:bg-[#1a1a1a]">
         {props.bookmark.ogthumb ? (
           <img
             src={props.bookmark.ogthumb}
             alt={`Preview de ${props.bookmark.name}`}
-            class="w-full h-full object-cover object-left-top"
+            class="w-full aspect-video"
+            classList={{
+              // Capas de livro são verticais: mostra a capa inteira em vez de recortar
+              'object-contain': props.bookmark.tags.includes('livros'),
+              'object-cover object-left-top': !props.bookmark.tags.includes('livros'),
+            }}
             loading="lazy"
           />
         ) : (
-          <div class="w-full h-full flex items-center justify-center">
+          <div class="w-full aspect-video flex items-center justify-center">
             {props.bookmark.favicon ? (
               <img
                 src={props.bookmark.favicon}

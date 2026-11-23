@@ -10,7 +10,12 @@ if (!fs.existsSync(thumbsDir)) {
   fs.mkdirSync(thumbsDir, { recursive: true });
 }
 
-const files = fs.readdirSync(linksDir).filter(f => f.endsWith('.mdx'));
+// Uso: node gerenciador-bookmarks/scripts/take-screenshots-playwright.mjs [slug ...]
+// Sem argumentos processa todos os links; com slugs, refaz só esses (sobrescrevendo a print).
+const onlySlugs = process.argv.slice(2);
+const files = fs.readdirSync(linksDir)
+  .filter(f => f.endsWith('.mdx') && !f.startsWith('_'))
+  .filter(f => onlySlugs.length === 0 || onlySlugs.includes(path.basename(f, '.mdx')));
 
 async function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -20,7 +25,7 @@ async function processFiles() {
   const browser = await chromium.launch({ headless: true });
   // Browser context com User-Agent real e viewport HD
   const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
     viewport: { width: 1280, height: 720 }
   });
 
@@ -57,7 +62,7 @@ async function processFiles() {
     const thumbPublicPath = `/ogthumbs/${thumbFilename}`;
 
     // Verificação de imagem existente e tamanho (se < 10kb e não for livro, refazemos)
-    if (fs.existsSync(thumbFilePath)) {
+    if (onlySlugs.length === 0 && fs.existsSync(thumbFilePath)) {
       const stats = fs.statSync(thumbFilePath);
       const fileSizeKBytes = stats.size / 1024;
       
@@ -74,18 +79,24 @@ async function processFiles() {
 
     try {
       // Navegar com timeout de 30s
-      await page.goto(siteUrl, { waitUntil: 'networkidle', timeout: 30000 });
+      await page.goto(siteUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      // Sites com conexões persistentes (websocket, polling) nunca chegam em networkidle
+      await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
       
       // Pequeno scroll para disparar lazy loads de imagens
       await page.evaluate(() => window.scrollBy(0, 300));
       await delay(2000); // 2 segundos extra para renderização estável
+      // Volta ao topo: a print mostra a dobra inicial da página
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await delay(1000);
 
       // Captura o screenshot da parte visível em PNG (buffer)
       const buffer = await page.screenshot();
 
       // Compressão via Sharp para WebP
+      // 600x338 = 16:9, mesmo formato das demais prints
       await sharp(buffer)
-        .resize({ width: 600, withoutEnlargement: true })
+        .resize({ width: 600, height: 338, fit: 'cover', position: 'top' })
         .webp({ quality: 80 })
         .toFile(thumbFilePath);
 
