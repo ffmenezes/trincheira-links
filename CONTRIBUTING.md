@@ -100,7 +100,7 @@ Regras:
 - tags: 2-4 tags em minusculo, sem acento. Siga o Guia de Tags de 3 Eixos:
   - Eixo A (Domínio): ai, dev, design, nocode, negocios ou conteudo.
   - Eixo B (Especialidade): frontend, backend, api, database, devops, security, mobile, agents, vibecoding, icons, ui, livros, blog, youtube, newsletter, reddit, marketing, produtividade, analytics.
-  - Eixo C (Específico/Ferramenta): regex, yaml, json, jwt, pdf, video, mockdata, webhook, qrcode, screenshots, transcricao, acessibilidade, dev-tools, ferramentas, tech12k, saas7d, bmad, shadcn, supabase, postgres, semcodar, bubble.
+  - Eixo C (Específico/Ferramenta): regex, yaml, json, jwt, pdf, video, mockdata, webhook, qrcode, screenshots, transcricao, acessibilidade, dev-tools, ferramentas, tech12k, saas7d, bmad, shadcn, supabase, postgres, ibeia, bubble.
   - PROIBIDO usar: 'open-source' e 'utils'. Use 'github', 'dev-tools' ou 'ferramentas' quando necessário.
 - favicon: use o padrao Google Favicons com o dominio do site (ex: domain=github.com para links do GitHub)
 - O nome do arquivo deve ser o slug do site: letras minusculas, sem acento, separado por hifen (ex: "jwt-io-debugger.mdx")

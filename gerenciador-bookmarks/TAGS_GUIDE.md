@@ -26,7 +26,7 @@ Escolha as tags que melhor detalham a área ou o formato do link dentro do Domí
 Use tags altamente específicas para facilitar a busca pontual. Essa é a camada mais detalhada.
 - **Tipos de Dados / Tecnologias:** `regex`, `yaml`, `json`, `jwt`, `pdf`, `video`, `audio`, `mockdata`, `webhook`, `timezone`.
 - **Funções Específicas:** `qrcode`, `screenshots`, `transcricao`, `acessibilidade`, `idiomas`, `dev-tools`, `ferramentas`.
-- **Marcas, Escolas e Ecossistemas:** `tech12k`, `saas7d`, `bmad`, `shadcn`, `supabase`, `postgres`, `semcodar`, `bubble`.
+- **Marcas, Escolas e Ecossistemas:** `tech12k`, `saas7d`, `bmad`, `shadcn`, `supabase`, `postgres`, `ibeia`, `bubble`.
 
 ---
 
@@ -39,7 +39,7 @@ Use tags altamente específicas para facilitar a busca pontual. Essa é a camada
    - Não use `gpt` se já for usar `ai` ou `agents`.
    - `components` e `ui` significam quase o mesmo, prefira sempre `ui`.
 3. **Mantenha Marcas e Ferramentas Próprias:**
-   - Ferramentas fundamentais ou ecossistemas de cursos (`bubble`, `semcodar`, `shadcn`) **devem** ser mantidas como tags próprias se isso ajudar a organizar o conhecimento.
+   - Ferramentas fundamentais ou ecossistemas de cursos (`bubble`, `ibeia`, `shadcn`) **devem** ser mantidas como tags próprias se isso ajudar a organizar o conhecimento.
 
 ## Exemplo de Aplicação
 * **Site:** Regex101
@@ -47,5 +47,5 @@ Use tags altamente específicas para facilitar a busca pontual. Essa é a camada
 * **Novas tags (Eixo A + B + C):** `["dev", "dev-tools", "regex"]`
 
 * **Site:** Curso Bubble Sem Codar
-* **Tags antigas:** `["bubble", "semcodar"]`
-* **Novas tags (Eixo A + C):** `["nocode", "bubble", "semcodar"]`
+* **Tags antigas:** `["bubble", "ibeia"]`
+* **Novas tags (Eixo A + C):** `["nocode", "bubble", "ibeia"]`
